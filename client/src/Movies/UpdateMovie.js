@@ -5,7 +5,7 @@ export default class Movie extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      movie: []
+      movie: null
     };
   }
 
@@ -20,7 +20,9 @@ export default class Movie extends React.Component {
   }
 
   handleChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
+    this.setState({
+      movie: { ...this.state.movie, [e.target.name]: e.target.value }
+    });
   };
 
   fetchMovie = id => {
@@ -29,10 +31,14 @@ export default class Movie extends React.Component {
       .then(res => this.setState({ movie: res.data }))
       .catch(err => console.log(err.response));
   };
-  onSubmit = id => {
+  onSubmit = e => {
+    e.preventDefault();
     axios
-      .post(`http://localhost:5000/api/movies/${id}`)
-      //   .then(res => this.setState({ movie: res.data }))
+      .put(
+        `http://localhost:5000/api/movies/${this.state.movie.id}`,
+        this.state.movie
+      )
+      .then(res => res.data, this.props.history.push("/"))
       .catch(err => console.log(err.response));
   };
 
@@ -57,28 +63,28 @@ export default class Movie extends React.Component {
             name="id"
             type="text"
             value={this.state.movie.id}
-            placeholder={this.props.id}
+            placeholder={this.state.id}
             onChange={this.handleChange}
           />
           <input
             name="title"
             type="text"
             value={this.state.movie.title}
-            placeholder={this.props.title}
+            placeholder={this.state.title}
             onChange={this.handleChange}
           />
           <input
             name="director"
             type="text"
             value={this.state.movie.director}
-            placeholder={this.props.director}
+            placeholder={this.state.director}
             onChange={this.handleChange}
           />
           <input
             name="metascore"
             type="text"
             value={this.state.movie.metascore}
-            placeholder={this.props.metascore}
+            placeholder={this.state.metascore}
             onChange={this.handleChange}
           />
           <input
